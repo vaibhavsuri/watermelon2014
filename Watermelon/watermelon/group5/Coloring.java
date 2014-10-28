@@ -6,67 +6,50 @@ import watermelon.sim.Pair;
 import watermelon.sim.Point;
 import watermelon.sim.seed;
 
-public class Player extends watermelon.sim.Player {
+public class Coloring{
 	static double distowall = 1.00;
 	static double distotree = 2.00;
 	static double distoseed = 2.00;
 
-	double m_length, m_width;
+	//double m_length, m_width;
 	
 	public void init() {
 
-	}
-
-	static double distance(seed tmp, Pair pair) {
-		return Math.sqrt((tmp.x - pair.x) * (tmp.x - pair.x) + (tmp.y - pair.y) * (tmp.y - pair.y));
-	}
-
-	// Return: the next position
-	// my position: dogs[id-1]
-	static double distance(seed a, Point b) {
-		return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
-	}
-
-	@Override
-	public ArrayList<seed> move(ArrayList<Pair> treelist, double width, double length, double s) {
-		// TODO Auto-generated method stub
-
-		m_length = length;
-		m_width = width;
-		
-		ArrayList<seed> seedlist = new ArrayList<seed>();
-		ArrayList<seed> finallist;
-		for (double i = distowall; i < width - distowall; i = i + distoseed) {
-			for (double j = distowall; j < length - distowall; j = j + distoseed) {
-				
-				seed tmp;	
-			    tmp = new seed(i, j, false);	
-				boolean add = true;
-				for (int f = 0; f < treelist.size(); f++) {
-					if (distance(tmp, treelist.get(f)) < distotree) {
-						add = false;
-						break;
-					}
-				}
-				if (add) {
-					seedlist.add(tmp);
-				}
-			}
+	}	
+	
+	
+	//alternating the color for each seed
+	public  static  ArrayList<seed>  alternate(ArrayList<seed> seedlist, double s, double m_length, double m_width)
+	{
+		boolean color = true;
+		for (seed current: seedlist)
+		{
+			current.tetraploid = color;
+			color = !color;
 		}
-		finallist = color(seedlist, s);
-		System.out.printf("seedlist size is %d", finallist.size());
-		return finallist;
+		return seedlist;
 	}
 	
-	//Calculating Euclidean distance
-	double dist(double Ax, double Ay, double Bx, double By)
+	//alternating the color for each seed, but this coloring is independent of the previous row of seeds
+	//the first seed in every row is a tetraploid and then the alternating begiins
+	public  static  ArrayList<seed>  alternate_edge_start(ArrayList<seed> seedlist, double s, double m_length, double m_width)
 	{
-		return (Math.sqrt(Math.pow(Ax-Bx,2)+Math.pow(Ay-By,2)));
+		boolean color = true;
+		for (seed current: seedlist)
+		{
+			if (dist(current.x, current.y, 0, current.y) == distowall)
+				color = true;
+			else 
+				color = !color;
+			current.tetraploid = color;
+		}
+		return seedlist;
 	}
+	
 	
 	//Colors the seeds in the seedlist inside out by evaluating the score for the board
 	//for the two choices (tetraploid or diploid) for each seed
-	public  ArrayList<seed> color(ArrayList<seed> seedlist, double s)
+	public  static ArrayList<seed> insideout(ArrayList<seed> seedlist, double s, double m_length, double m_width)
 	{
 		boolean[] color_check = new boolean[seedlist.size()];
 		Arrays.fill(color_check, false);
@@ -125,6 +108,57 @@ public class Player extends watermelon.sim.Player {
 	    
 	}
 	
+	
+	//same as inside out but the the coloring starts from the top left corner
+	public  static ArrayList<seed> topleft(ArrayList<seed> seedlist, double s, double m_length, double m_width)
+	{
+		boolean[] color_check = new boolean[seedlist.size()];
+		Arrays.fill(color_check, false);
+	    seed first_seed=new seed();
+	    ArrayList<seed> templist = new ArrayList<seed>();
+	    
+	    first_seed = seedlist.get(0);
+	    templist.add(first_seed);
+	    color_check[seedlist.indexOf(first_seed)]=true;
+	    //System.out.println("Seed List size: "+seedlist.size());
+	    
+	    double offset = 1;//offset determines the radius for coloring
+	    int seeds_changes=0;
+	    while(!checkIfFilled(color_check))
+	    {
+	    	int count = 0;
+	    	for (int i = 0; i < seedlist.size(); i++)
+	    	{
+	    		if ((distanceseed(seedlist.get(i), first_seed) < offset * distoseed) && color_check[i]==false)
+	    		{
+	    			count++;
+	    			templist.add(seedlist.get(i));
+	    			double false_score = calculate_score(templist, s);
+	    			templist.get(templist.size()-1).tetraploid = true;
+	    			double true_score = calculate_score(templist, s);
+	    			System.out.println("True Score: "+true_score+ " False score: "+false_score);
+	    			if(false_score > true_score)
+	    			{
+	    				templist.get(templist.size()-1).tetraploid = false;
+	    				System.out.println("Chose False");
+	    			}
+	    			else
+	    				System.out.println("Chose True");
+	    			color_check[i]=true;
+	    			seeds_changes++;
+	    			System.out.println(seeds_changes);
+	    		}
+	    	}
+	    	if (count == 0) //all seeds within the current radius are colored
+	    	{
+	    		offset++; //increase the radius
+	    	}
+	    }
+	    return templist;
+	    
+	}
+		
+		
 	//checks if all the seeds in the seedlist have been colored
 	private static boolean checkIfFilled(boolean[] colored){
 		boolean all=true;
@@ -135,8 +169,14 @@ public class Player extends watermelon.sim.Player {
 		return all;
 	}
 	
+	//Calculating Euclidean distance
+		public static double dist(double Ax, double Ay, double Bx, double By)
+		{
+			return (Math.sqrt(Math.pow(Ax-Bx,2)+Math.pow(Ay-By,2)));
+		}
+	
 	//SIMULATOR CODE
-	private double calculate_score(ArrayList<seed> seedlist, double s){
+	public static double calculate_score(ArrayList<seed> seedlist, double s){
 		double total = 0;
 		for (int i = 0; i < seedlist.size(); i++) {
 			double score;
@@ -170,7 +210,8 @@ public class Player extends watermelon.sim.Player {
 		return total;
 	}
 
-	static double distanceseed(seed a, seed b) {
+	//Calculating distance between two seeds
+	public static double distanceseed(seed a, seed b) {
 		return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 	}
 
