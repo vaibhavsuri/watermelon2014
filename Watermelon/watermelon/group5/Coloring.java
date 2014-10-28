@@ -18,6 +18,98 @@ public class Coloring{
 	}	
 	
 	
+	//colors the seeds in concentric circles moving inside out
+	public  static ArrayList<seed> concentric(ArrayList<seed> seedlist, double s, double m_length, double m_width)
+	{
+		boolean[] color_check = new boolean[seedlist.size()];
+		Arrays.fill(color_check, false);
+	    double middle_x = m_width *0.5, middle_y = m_length*0.5;
+	    double least_distance = Double.POSITIVE_INFINITY;
+	    seed middle_seed=new seed();
+	    ArrayList<seed> templist = new ArrayList<seed>();
+	    
+	    //finding the seed in the "middle"
+	    for(seed X: seedlist)
+	    {
+	    	double curr_dist = Math.abs(dist(middle_x, middle_y, X.x, X.y));
+	    	if (curr_dist < least_distance)
+	    	{
+	    		least_distance = curr_dist;
+	    		middle_seed = X;
+	    	}
+	    }
+	    templist.add(middle_seed);
+	    color_check[seedlist.indexOf(middle_seed)]=true;
+	    //System.out.println("Seed List size: "+seedlist.size());
+	    
+	    double offset = 2;//offset determines the radius for coloring
+	    boolean color = true;
+	    while(!checkIfFilled(color_check))
+	    {
+	    	int count = 0;
+	    	for (int i = 0; i < seedlist.size(); i++)
+	    	{
+	    		if ((distanceseed(seedlist.get(i), middle_seed) < offset * distoseed) && color_check[i]==false)
+	    		{
+		    		count++;
+	    			seedlist.get(i).tetraploid = color;
+	    			templist.add(seedlist.get(i));
+	    			color_check[i]=true;
+	    		}
+	    	}
+	    	if (count == 0) //all seeds within the current radius are colored
+	    	{
+	    		offset++; //increase the radius
+	    		color = !color;
+	    	}
+	    }
+	    return templist;
+	    
+	}
+
+	
+	//moves inside out and colors all the "uncolored" neighbors of a seed with its opposite ploidy
+	public  static  ArrayList<seed> neighbor_invert(ArrayList<seed> seedlist, double s, double m_length, double m_width)
+	{
+		boolean[] color_check = new boolean[seedlist.size()];
+		Arrays.fill(color_check, false);
+	    double middle_x = m_width *0.5, middle_y = m_length*0.5;
+	    double least_distance = Double.POSITIVE_INFINITY;
+	    seed middle_seed=new seed();
+	    ArrayList<seed> finallist = new ArrayList<seed>();
+	    //finding the seed in the "middle"
+	    for(seed X: seedlist)
+	    {
+	    	double curr_dist = Math.abs(dist(middle_x, middle_y, X.x, X.y));
+	    	if (curr_dist < least_distance)
+	    	{
+	    		least_distance = curr_dist;
+	    		middle_seed = X;
+	    	}
+	    }
+	    finallist.add(middle_seed);
+	    color_check[seedlist.indexOf(middle_seed)]=true;
+	    
+	    while(!checkIfFilled(color_check))
+	    {
+	    	for(int i = 0; i < finallist.size(); i++)
+	    	{
+	    		System.out.println("Looping at "+i);
+	    		seed center = finallist.get(i);
+		    	for (int j = 0; j < seedlist.size(); j++)
+		    	{
+		    		if ((distanceseed(seedlist.get(j), center) < 2 * distoseed) && color_check[j]==false)
+		    		{
+		    			seedlist.get(j).tetraploid = !center.tetraploid;
+		    			finallist.add(seedlist.get(j));
+		    			color_check[j]=true;
+		    		}
+		    	}
+	    	}
+	    }	    
+	    return finallist;
+	}
+	
 	//alternating the color for each seed
 	public  static  ArrayList<seed>  alternate(ArrayList<seed> seedlist, double s, double m_length, double m_width)
 	{
@@ -31,7 +123,7 @@ public class Coloring{
 	}
 	
 	//alternating the color for each seed, but this coloring is independent of the previous row of seeds
-	//the first seed in every row is a tetraploid and then the alternating begiins
+	//the first seed in every row is a tetraploid and then the alternating begins
 	public  static  ArrayList<seed>  alternate_edge_start(ArrayList<seed> seedlist, double s, double m_length, double m_width)
 	{
 		boolean color = true;
@@ -53,7 +145,7 @@ public class Coloring{
 	{
 		boolean[] color_check = new boolean[seedlist.size()];
 		Arrays.fill(color_check, false);
-	    double middle_x = m_length *0.5, middle_y = m_width*0.5;
+	    double middle_x = m_width *0.5, middle_y = m_length*0.5;
 	    double least_distance = Double.POSITIVE_INFINITY;
 	    seed middle_seed=new seed();
 	    ArrayList<seed> templist = new ArrayList<seed>();

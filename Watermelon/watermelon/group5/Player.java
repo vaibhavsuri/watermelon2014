@@ -20,10 +20,14 @@ public class Player extends watermelon.sim.Player {
 	@Override
 	public ArrayList<seed> move(ArrayList<Pair> treelist, double width, double length, double s) {
 		// TODO Auto-generated method stub
-		ArrayList<seed> seedlist = Packing.hexagonal_invert(treelist, length, width);
-		//ArrayList<seed> finallist = Coloring.topleft(seedlist, s, length, width);
-		//ArrayList<seed> finallist = Coloring.insideout(seedlist, s, length, width);
-		ArrayList<seed> finallist = Coloring.alternate_edge_start(seedlist, s, length, width);
+		ArrayList<seed> seedlist;
+		if (length > width)
+			seedlist = Packing.hexagonal(treelist, length, width);
+		else
+			seedlist = Packing.hexagonal_invert(treelist, length, width);
+		
+		ArrayList<seed> finallist = Coloring.concentric(seedlist, s, length, width);
+
 		return finallist;
 	}
 	
