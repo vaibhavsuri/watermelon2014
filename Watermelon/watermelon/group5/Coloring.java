@@ -16,6 +16,45 @@ public class Coloring{
 	public void init() {
 
 	}	
+
+	//colors the seeds in concentric circles moving inside out
+	public  static ArrayList<seed> concentric_top_left(ArrayList<seed> seedlist, double s, double m_length, double m_width)
+	{
+		boolean[] color_check = new boolean[seedlist.size()];
+		Arrays.fill(color_check, false);
+	    double middle_x = m_width *0.5, middle_y = m_length*0.5;
+	    double least_distance = Double.POSITIVE_INFINITY;
+	    
+	    ArrayList<seed> templist = new ArrayList<seed>();
+	    seed middle_seed = seedlist.get(0);
+	    templist.add(middle_seed);
+	    color_check[seedlist.indexOf(middle_seed)]=true;
+	    
+	    double offset = 2;//offset determines the radius for coloring
+	    boolean color = true;
+	    while(!checkIfFilled(color_check))
+	    {
+	    	int count = 0;
+	    	for (int i = 0; i < seedlist.size(); i++)
+	    	{
+	    		if ((distanceseed(seedlist.get(i), middle_seed) < offset * distoseed) && color_check[i]==false)
+	    		{
+		    		count++;
+	    			seedlist.get(i).tetraploid = color;
+	    			templist.add(seedlist.get(i));
+	    			color_check[i]=true;
+	    		}
+	    	}
+	    	if (count == 0) //all seeds within the current radius are colored
+	    	{
+	    		offset++; //increase the radius
+	    		color = !color;
+	    	}
+	    }
+	    return templist;
+	    
+	}
+
 	
 	
 	//colors the seeds in concentric circles moving inside out
@@ -67,7 +106,37 @@ public class Coloring{
 	    
 	}
 
-	
+	//starts from top left and colors all the "uncolored" neighbors of a seed with its opposite ploidy
+	public  static  ArrayList<seed> neighbor_invert_topleft(ArrayList<seed> seedlist, double s, double m_length, double m_width)
+	{
+		boolean[] color_check = new boolean[seedlist.size()];
+		Arrays.fill(color_check, false);
+	    ArrayList<seed> finallist = new ArrayList<seed>();
+	    
+	    
+	    seed middle_seed = seedlist.get(0);
+	    finallist.add(middle_seed);
+	    color_check[seedlist.indexOf(middle_seed)]=true;
+	    
+	    while(!checkIfFilled(color_check))
+	    {
+	    	for(int i = 0; i < finallist.size(); i++)
+	    	{
+	    		seed center = finallist.get(i);
+		    	for (int j = 0; j < seedlist.size(); j++)
+		    	{
+		    		if ((distanceseed(seedlist.get(j), center) < 1.5 * distoseed) && color_check[j]==false)
+		    		{
+		    			seedlist.get(j).tetraploid = !center.tetraploid;
+		    			finallist.add(seedlist.get(j));
+		    			color_check[j]=true;
+		    		}
+		    	}
+	    	}
+	    }	    
+	    return finallist;
+	}
+
 	//moves inside out and colors all the "uncolored" neighbors of a seed with its opposite ploidy
 	public  static  ArrayList<seed> neighbor_invert(ArrayList<seed> seedlist, double s, double m_length, double m_width)
 	{
@@ -77,6 +146,7 @@ public class Coloring{
 	    double least_distance = Double.POSITIVE_INFINITY;
 	    seed middle_seed=new seed();
 	    ArrayList<seed> finallist = new ArrayList<seed>();
+	    
 	    //finding the seed in the "middle"
 	    for(seed X: seedlist)
 	    {
@@ -94,11 +164,10 @@ public class Coloring{
 	    {
 	    	for(int i = 0; i < finallist.size(); i++)
 	    	{
-	    		System.out.println("Looping at "+i);
 	    		seed center = finallist.get(i);
 		    	for (int j = 0; j < seedlist.size(); j++)
 		    	{
-		    		if ((distanceseed(seedlist.get(j), center) < 2 * distoseed) && color_check[j]==false)
+		    		if ((distanceseed(seedlist.get(j), center) < 1.5 * distoseed) && color_check[j]==false)
 		    		{
 		    			seedlist.get(j).tetraploid = !center.tetraploid;
 		    			finallist.add(seedlist.get(j));

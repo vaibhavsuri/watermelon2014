@@ -26,8 +26,9 @@ public class Player extends watermelon.sim.Player {
 		else
 			seedlist = Packing.hexagonal_invert(treelist, length, width);
 		
-		ArrayList<seed> finallist = Coloring.concentric(seedlist, s, length, width);
-
+		//ArrayList<seed> finallist = Coloring.concentric_top_left(seedlist, s, length, width);
+		//ArrayList<seed> finallist = Coloring.insideout(seedlist, s, length, width);
+		ArrayList<seed> finallist = Coloring.neighbor_invert_topleft(seedlist, s, length, width);	
 		return finallist;
 	}
 	
