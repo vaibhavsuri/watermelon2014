@@ -17,6 +17,7 @@ public class Coloring{
 
 	}	
 
+	public Coloring(){}
 	//colors the seeds in concentric circles moving inside out
 	public  static ArrayList<seed> concentric_top_left(ArrayList<seed> seedlist, double s, double m_length, double m_width)
 	{

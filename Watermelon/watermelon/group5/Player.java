@@ -26,11 +26,20 @@ public class Player extends watermelon.sim.Player {
 		else
 			seedlist = Packing.hexagonal_invert(treelist, length, width);
 		
-		//ArrayList<seed> finallist = Coloring.concentric_top_left(seedlist, s, length, width);
-		//ArrayList<seed> finallist = Coloring.insideout(seedlist, s, length, width);
-		ArrayList<seed> finallist = Coloring.neighbor_invert_topleft(seedlist, s, length, width);	
-		return finallist;
+		ArrayList<seed> finallistConcentric = Coloring.concentric_top_left(seedlist, s, length, width);
+		ArrayList<seed> finallistInsideOut = Coloring.insideout(seedlist, s, length, width);
+		ArrayList<seed> finallistInvertTopLeft = Coloring.neighbor_invert_topleft(seedlist, s, length, width);	
+		
+		double scoreConcentric=PlayerUtil.calculatescore(finallistConcentric, s);
+		double scoreInsideOut=PlayerUtil.calculatescore(finallistInsideOut, s);
+		double scoreInvertTopLeft=PlayerUtil.calculatescore(finallistInvertTopLeft, s);
+		double max=Math.max(scoreConcentric, Math.max(scoreInsideOut,scoreInvertTopLeft));
+		
+		
+		
+		return (max==scoreConcentric?finallistConcentric:(max==scoreInsideOut?finallistInsideOut:finallistInvertTopLeft));
 	}
+	
 	
 
 }
