@@ -1,5 +1,6 @@
 package watermelon.group5;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import watermelon.sim.*;
@@ -24,7 +25,7 @@ public class PlayerUtil {
 		  if (j != i) {
 		    totaldis = totaldis
 							+ Math.pow(
-									distanceseed(seedList.get(i),
+									distanceSeed(seedList.get(i),
 											seedList.get(j)), -2);
 				}
 			}
@@ -34,7 +35,7 @@ public class PlayerUtil {
 								.get(i).tetraploid && seedList.get(j).tetraploid))) {
 					difdis = difdis
 							+ Math.pow(
-									distanceseed(seedList.get(i),
+									distanceSeed(seedList.get(i),
 											seedList.get(j)), -2);
 			  }
 			}
@@ -45,8 +46,22 @@ public class PlayerUtil {
 		return total;
 	}
 	
-	public static double distanceseed(seed a, seed b) {
-		return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+	public static double distanceSeed(
+	  seed a, 
+	  seed b) {
+	  return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+	}
+	
+	public List<seed> getNeighborSeeds(
+	    seed s, 
+	    List<seed>seedList){
+		List <seed> neighborSeeds = new ArrayList<>();
+	  for(int i = 0 ; i < seedList.size() ; i++){
+		if(!s.equals(seedList.get(i)) && distanceSeed(seedList.get(i),s) < 2.11){
+		  neighborSeeds.add(seedList.get(i));		
+		}
+	  }
+	  return neighborSeeds;
 	}
 	
 }

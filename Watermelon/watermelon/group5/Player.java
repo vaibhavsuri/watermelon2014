@@ -18,7 +18,11 @@ public class Player extends watermelon.sim.Player {
 	}
 
 	@Override
-	public ArrayList<seed> move(ArrayList<Pair> treelist, double width, double length, double s) {
+	public ArrayList<seed> move(
+			ArrayList<Pair> treelist, 
+			double width, 
+			double length, 
+			double s) {
 		// TODO Auto-generated method stub
 		ArrayList<seed> seedlistA, seedlistB;
 		
@@ -26,12 +30,13 @@ public class Player extends watermelon.sim.Player {
 		seedlistB = Packing.hexagonal_invert(treelist, length, width);
 		ArrayList<seed> choicelistA = Coloring.neighbor_invert_topleft(seedlistA, s, length, width);
 		ArrayList<seed> choicelistB = Coloring.neighbor_invert_topleft(seedlistB, s, length, width);
+		
 		double scoreA = Coloring.calculate_score(choicelistA, s);
 		double scoreB = Coloring.calculate_score(choicelistB, s);
-		if (scoreA>scoreB)
-			return choicelistA;
-		else
-			return choicelistB;
+		Coloring.randomColoring(seedlistA);
+		ArrayList<seed> choicelistC = Coloring.concentric_top_left(seedlistB, s, length, width);
+		return seedlistA;
+		//return scoreA > scoreB ? choicelistA : choicelistB;
 	}
 	
 

@@ -16,6 +16,7 @@ public class Coloring{
 	public void init() {
 
 	}
+	public Coloring(){}
 	
 	//brute force coloring
 	public  static ArrayList<seed> bruteforce(ArrayList<seed> seedlist, double s, double m_length, double m_width)
@@ -96,6 +97,16 @@ public class Coloring{
 	    
 	}
 
+	public static void randomColoring (List<seed> seedList){
+		Random rand = new Random();
+		for (seed s : seedList){
+		  if(rand.nextBoolean()){
+		    s.tetraploid = true;
+		  }else{
+		    s.tetraploid = false;
+		  }
+		}
+	}
 	
 	
 	//colors the seeds in concentric circles moving inside out
