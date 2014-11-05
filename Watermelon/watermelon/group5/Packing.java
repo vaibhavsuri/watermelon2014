@@ -17,7 +17,8 @@ public class Packing{
 
 	}
 	
-	
+	public Packing(){}
+
 	
 	static double distance(seed tmp, Pair pair) {
 		return Math.sqrt((tmp.x - pair.x) * (tmp.x - pair.x) + (tmp.y - pair.y) * (tmp.y - pair.y));

@@ -5,6 +5,7 @@ import java.util.*;
 import watermelon.sim.Pair;
 import watermelon.sim.Point;
 import watermelon.sim.seed;
+import watermelon.group5.*;
 
 public class Coloring{
 	static double distowall = 1.00;
@@ -97,15 +98,19 @@ public class Coloring{
 	    
 	}
 
-	public static void randomColoring (List<seed> seedList){
+	public static ArrayList<seed> randomColoring (ArrayList<seed> seedList){
 		Random rand = new Random();
+		ArrayList<seed> rtnList = new ArrayList<>();
 		for (seed s : seedList){
 		  if(rand.nextBoolean()){
 		    s.tetraploid = true;
 		  }else{
 		    s.tetraploid = false;
 		  }
+		  rtnList.add(s);
 		}
+		
+		return rtnList;
 	}
 	
 	
@@ -159,28 +164,28 @@ public class Coloring{
 	}
 
 	//starts from top left and colors all the "uncolored" neighbors of a seed with its opposite ploidy
-	public  static  ArrayList<seed> neighbor_invert_topleft(ArrayList<seed> seedlist, double s, double m_length, double m_width)
+	public  static  ArrayList<seed> neighbor_invert_topleft(ArrayList<seed> packList, double s, double m_length, double m_width)
 	{
-		boolean[] color_check = new boolean[seedlist.size()];
+		boolean[] color_check = new boolean[packList.size()];
 		Arrays.fill(color_check, false);
 	    ArrayList<seed> finallist = new ArrayList<seed>();
 	    
 	    
-	    seed middle_seed = seedlist.get(0);
+	    seed middle_seed = packList.get(0);
 	    finallist.add(middle_seed);
-	    color_check[seedlist.indexOf(middle_seed)]=true;
+	    color_check[packList.indexOf(middle_seed)]=true;
 	    
 	    while(!checkIfFilled(color_check))
 	    {
 	    	for(int i = 0; i < finallist.size(); i++)
 	    	{
 	    		seed center = finallist.get(i);
-		    	for (int j = 0; j < seedlist.size(); j++)
+		    	for (int j = 0; j < packList.size(); j++)
 		    	{
-		    		if ((distanceseed(seedlist.get(j), center) < 1.5 * distoseed) && color_check[j]==false)
+		    		if ((distanceseed(packList.get(j), center) < 1.5 * distoseed) && color_check[j]==false)
 		    		{
-		    			seedlist.get(j).tetraploid = !center.tetraploid;
-		    			finallist.add(seedlist.get(j));
+		    			packList.get(j).tetraploid = !center.tetraploid;
+		    			finallist.add(packList.get(j));
 		    			color_check[j]=true;
 		    		}
 		    	}
@@ -427,5 +432,115 @@ public class Coloring{
 	public static double distanceseed(seed a, seed b) {
 		return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 	}
+	
+  public static ArrayList<seed> incrementalColoring(
+      ArrayList<seed> seedList, 
+	  double width, 
+	  double length,
+	  double s){
+	  
+	ArrayList<Seed> sList = PlayerUtil.convertSeedList(seedList);
+	ArrayList<Seed> startList = new ArrayList<>();
+	
+	for (double l = length / 5 ; l <  length  ; l += length / 5 ){
+	  for ( double w = width / 5 ; w < width  ; w += width / 5){
+	    startList.add(PlayerUtil.getNeighborSeeds(new Seed(l,w), sList).get(0));
+	  }
+	}
+	double bestScore = 0;
+	double tempScore = 0;
+	ArrayList<seed>bestList = new ArrayList<>();
+	ArrayList<seed>tempList = null;
+	for (Seed se : startList){
+	  tempList = incrementalColoring(seedList, width, length, se);
+	  tempScore = PlayerUtil.calculatescore(tempList, s);
+	  if (tempScore > bestScore ){
+	    bestList = tempList;
+	    bestScore = tempScore;
+	  }
+	}
 
+    
+    return bestList;
+    
+  }
+  public static ArrayList<seed> incrementalColoring(
+		  ArrayList<seed> seedList, 
+		  double width, 
+		  double length, 
+		  Seed start){
+    if ( seedList.size() < 3 ) return null;
+
+    
+    ArrayList<Seed> sList = PlayerUtil.convertSeedList(seedList);
+	ArrayList<Seed> coloredSeeds = new ArrayList<>();
+
+    // check random version as well to see if it gives better score
+	
+	
+    LinkedList<Seed> q = new LinkedList<>();
+    q.add(start);
+   
+    while (!q.isEmpty()){
+      double diploidScore = 0;
+      double tetraScore = 0;
+      Seed seedToBeColored = q.removeFirst();
+    	
+      for (Seed from:coloredSeeds){
+        if (from.ploidy == Ploidy.TETRA){
+        	tetraScore += PlayerUtil.getSeedEffect(seedToBeColored, from);
+        } else {
+        	diploidScore +=PlayerUtil.getSeedEffect(seedToBeColored, from);
+        }
+      }
+      if(diploidScore > tetraScore){
+        seedToBeColored.ploidy = Ploidy.TETRA;
+    	seedToBeColored.tetraploid = true;
+      }else{
+    	 seedToBeColored.ploidy = Ploidy.DIPLO;
+    	 seedToBeColored.tetraploid = false;
+      }
+      for (Seed s : PlayerUtil.getNeighborSeeds(seedToBeColored, sList)){
+        if(s.ploidy == Ploidy.NONE && !q.contains(s)){
+    	  q.add(s);  
+        }
+      }
+      coloredSeeds.add(seedToBeColored);
+    	
+    }
+    seedList = new ArrayList<>();
+    for(Seed s : sList){
+      seedList.add(s.getSeed(s));
+    }
+    
+    return seedList;
+  }
+
+  
+  public static ArrayList<seed> increColoring(ArrayList<seed> seedList){
+	  	
+	    for (int i = 0 ; i < seedList.size() ; i++){
+	      double diploidScore = 0;
+	      double tetraScore = 0;
+	      seed seedToBeColored = seedList.get(i);
+	    	
+	      for (seed from:seedList){
+	        if (from.tetraploid){
+	        	tetraScore += PlayerUtil.getSeedEffect(seedToBeColored, from);
+	        } else {
+	        	diploidScore += PlayerUtil.getSeedEffect(seedToBeColored, from);
+	        }
+	      }
+	      if( diploidScore > tetraScore){
+	        seedToBeColored.tetraploid = true;
+	      }else{
+	    	 seedToBeColored.tetraploid = false;
+	    	 
+	      }
+	    	
+	    }	    
+	    return seedList;
+  }
+  
+  
 }
