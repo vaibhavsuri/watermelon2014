@@ -17,7 +17,7 @@ public class Coloring{
 	public void init() {
 
 	}
-	public Coloring(){}
+
 	
 	//brute force coloring
 	public  static ArrayList<seed> bruteforce(ArrayList<seed> seedlist, double s, double m_length, double m_width)

@@ -17,7 +17,7 @@ public class Packing{
 
 	}
 	
-	public Packing(){}
+
 
 	
 	static double distance(seed tmp, Pair pair) {
