@@ -1,0 +1,19 @@
+package watermelon.group5;
+
+import watermelon.group5.*;
+
+public class Seed {
+  public double x;
+  public double y;
+  public enum Ploidy ploidy;
+  public double score;
+    
+  public Seed() { x = 0.0; y = 0.0; tetraploid = false; }
+
+  public seed(double xx, double yy, boolean tetra) {
+    x = xx;
+    y = yy;
+    tetraploid = tetra;
+       
+  }
+}
