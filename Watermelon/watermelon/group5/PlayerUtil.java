@@ -1,6 +1,7 @@
 package watermelon.group5;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import watermelon.sim.*;
@@ -150,5 +151,36 @@ public class PlayerUtil {
 	// compute Euclidean distance between two points
 	static double distance(seed a, Pair pair) {
 		return Math.sqrt((a.x - pair.x) * (a.x - pair.x) + (a.y - pair.y) * (a.y - pair.y));
+	}
+	
+	//returns the INDICES of seeds with less dense neighborhoods
+	//hop value determines the neighborhood radius
+	public static ArrayList<Integer> less_dense_seeds(ArrayList<seed> seedList, int hop)
+	{
+		ArrayList<Integer> less_dense_seeds = new ArrayList<Integer>();
+		int[] neighbors = new int[seedList.size()];
+		Arrays.fill(neighbors, 0);
+		double mean=0;
+		for (int i = 0; i < seedList.size(); i++)
+		{
+			for (int j = 0; j < seedList.size(); j++)
+			{
+				if (distanceSeed(seedList.get(i), seedList.get(j)) <= hop*distoseed)
+				{
+					neighbors[i]++;
+				}
+			}
+			mean = mean + neighbors[i];
+		}
+		mean = mean / seedList.size();
+		for (int i = 0; i < seedList.size(); i++)
+		{
+			if (neighbors[i] < mean)
+			{
+				less_dense_seeds.add(i);
+			//	System.out.println("Less dense seed = "+i);
+			}
+		}
+		return less_dense_seeds;
 	}
 }
