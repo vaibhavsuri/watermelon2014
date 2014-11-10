@@ -45,6 +45,7 @@ public class Packing{
 				}
 			}
 		}
+		fill_seeds(seedlist,treelist,length, width);
 		return seedlist;
 	}
 	
@@ -74,6 +75,7 @@ public class Packing{
 					j = j - (distoseed - distotree);
 			}
 		}
+		fill_seeds(seedlist,treelist,length, width);
 		return seedlist;
 	}
 	
@@ -111,7 +113,8 @@ public class Packing{
 				offset=0;
 			
 			i = i + 1.7321;
-		}
+		}		
+		fill_seeds(seedlist,treelist,length, width);
 		return seedlist;
 	}
 	
@@ -149,7 +152,37 @@ public class Packing{
 				
 				i = i + Math.sqrt(3) + 0.000001;
 			}
+			fill_seeds(seedlist,treelist,length, width);
 			return seedlist;
+		}
+		
+		
+		public static void fill_seeds(ArrayList<seed> seedlist, ArrayList<Pair> treelist, double length, double width)
+		{
+			double offset = 0.005;
+			for (double i = distowall; i < length - distowall; i = i + offset) {
+				for (double j = distowall; j < width - distowall; j = j + offset) {
+					
+					seed tmp;	
+				    tmp = new seed(j, i, false);	
+					boolean add = true;
+					for (int f = 0; f < treelist.size(); f++) {
+						if (distance(tmp, treelist.get(f)) < distotree) {
+							add = false;
+							break;
+						}
+					}
+					for (int f = 0; f < seedlist.size(); f++) {
+						if (PlayerUtil.distanceSeed(tmp, seedlist.get(f)) < distoseed) {
+							add = false;
+							break;
+						}
+					}
+					if (add) {
+						seedlist.add(tmp);
+					}
+				}
+			}
 		}
 
 }
