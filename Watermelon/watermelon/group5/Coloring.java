@@ -7,6 +7,7 @@ import watermelon.sim.Point;
 import watermelon.sim.seed;
 import watermelon.group5.*;
 
+
 public class Coloring{
 	static double distowall = 1.00;
 	static double distotree = 2.00;
@@ -164,35 +165,62 @@ public class Coloring{
 	}
 
 	//starts from top left and colors all the "uncolored" neighbors of a seed with its opposite ploidy
-	public  static  ArrayList<seed> neighbor_invert_topleft(ArrayList<seed> packList, double s, double m_length, double m_width)
-	{
-		boolean[] color_check = new boolean[packList.size()];
-		Arrays.fill(color_check, false);
-	    ArrayList<seed> finallist = new ArrayList<seed>();
-	    
-	    
-	    seed middle_seed = packList.get(0);
-	    finallist.add(middle_seed);
-	    color_check[packList.indexOf(middle_seed)]=true;
-	    
-	    while(!checkIfFilled(color_check))
-	    {
-	    	for(int i = 0; i < finallist.size(); i++)
-	    	{
-	    		seed center = finallist.get(i);
-		    	for (int j = 0; j < packList.size(); j++)
+		public  static  ArrayList<seed> neighbor_invert_topleft(ArrayList<seed> seedlist, double s, double m_length, double m_width)
+		{
+			boolean[] color_check = new boolean[seedlist.size()];
+			Arrays.fill(color_check, false);
+		    ArrayList<seed> finallist = new ArrayList<seed>();
+		    
+		    
+		    seed middle_seed = seedlist.get(0);
+		    finallist.add(middle_seed);
+		    color_check[seedlist.indexOf(middle_seed)]=true;
+		    
+		    while(!checkIfFilled(color_check))
+		    {
+		    	seed center;
+		    	boolean change=false;
+		    	System.out.println("Colored: "+finallist.size());
+		    	for(int i = 0; i < finallist.size(); i++)
 		    	{
-		    		if ((distanceseed(packList.get(j), center) < 1.5 * distoseed) && color_check[j]==false)
-		    		{
-		    			packList.get(j).tetraploid = !center.tetraploid;
-		    			finallist.add(packList.get(j));
-		    			color_check[j]=true;
-		    		}
+		    		center = finallist.get(i);
+			    	for (int j = 0; j < seedlist.size(); j++)
+			    	{
+			    		if ((distanceseed(seedlist.get(j), center) < 1.5 * distoseed) && color_check[j]==false)
+			    		{
+			    			seedlist.get(j).tetraploid = !center.tetraploid;
+			    			finallist.add(seedlist.get(j));
+			    			change = true;
+			    			color_check[j]=true;			    		
+			    		}
+			    	}
 		    	}
-	    	}
-	    }	    
-	    return finallist;
-	}
+		    	
+		    	if(!change)
+		    	{
+		    		double min_dist = Double.POSITIVE_INFINITY;
+		    		int center_seed = -1;
+		    		int close_seed = -1;
+		    		for(int i = 0; i < finallist.size(); i++)
+		    		{
+		    			for (int j = 0; j < seedlist.size(); j++)
+				    	{
+		    				if (PlayerUtil.distanceSeed(finallist.get(i), seedlist.get(j)) < min_dist && color_check[j]==false)
+		    				{
+		    					min_dist = PlayerUtil.distanceSeed(finallist.get(i), seedlist.get(j));
+		    					center_seed = i;
+		    					close_seed = j;
+		    				}
+				    	}
+		    		}
+	    			seedlist.get(close_seed).tetraploid = !finallist.get(center_seed).tetraploid;
+	    			color_check[close_seed]=true;			    		
+	    			finallist.add(seedlist.get(close_seed));
+		    	}
+		    }	    
+		    return finallist;
+		}
+
 
 	//moves inside out and colors all the "uncolored" neighbors of a seed with its opposite ploidy
 	public  static  ArrayList<seed> neighbor_invert(ArrayList<seed> seedlist, double s, double m_length, double m_width)
@@ -219,6 +247,7 @@ public class Coloring{
 	    
 	    while(!checkIfFilled(color_check))
 	    {
+	    	boolean change = false;
 	    	for(int i = 0; i < finallist.size(); i++)
 	    	{
 	    		seed center = finallist.get(i);
@@ -228,11 +257,33 @@ public class Coloring{
 		    		{
 		    			seedlist.get(j).tetraploid = !center.tetraploid;
 		    			finallist.add(seedlist.get(j));
+		    			change=true;
 		    			color_check[j]=true;
 		    		}
 		    	}
+	    	}	    
+		    if(!change)
+	    	{
+	    		double min_dist = Double.POSITIVE_INFINITY;
+	    		int center_seed = -1;
+	    		int close_seed = -1;
+	    		for(int i = 0; i < finallist.size(); i++)
+	    		{
+	    			for (int j = 0; j < seedlist.size(); j++)
+			    	{
+	    				if (PlayerUtil.distanceSeed(finallist.get(i), seedlist.get(j)) < min_dist && color_check[j]==false)
+	    				{
+	    					min_dist = PlayerUtil.distanceSeed(finallist.get(i), seedlist.get(j));
+	    					center_seed = i;
+	    					close_seed = j;
+	    				}
+			    	}
+	    		}
+				seedlist.get(close_seed).tetraploid = !finallist.get(center_seed).tetraploid;
+				color_check[close_seed]=true;			    		
+				finallist.add(seedlist.get(close_seed));
 	    	}
-	    }	    
+    	}	    
 	    return finallist;
 	}
 	
@@ -541,6 +592,5 @@ public class Coloring{
 	    }	    
 	    return seedList;
   }
-  
   
 }
