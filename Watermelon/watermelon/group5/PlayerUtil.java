@@ -183,4 +183,18 @@ public class PlayerUtil {
 		}
 		return less_dense_seeds;
 	}
+	public static boolean inBoundry(Seed location, double width, double height) {
+		return !(location.x < 1.0 - 0.0000001 || location.x > width - (1.0-0.0000001) || location.y < 1.0 - 0.0000001 || location.y > height - (1.0 - 0.0000001));
+	}
+	public static boolean closeToTree(Seed location, ArrayList<Seed> trees) {
+		return PlayerUtil.nearAny(location, trees, 2.0 - 0.0000001);
+	}
+	static public boolean nearAny(Seed target, ArrayList<Seed> locations, double d) {
+    	for (Seed location : locations) {
+    		if (PlayerUtil.distanceSeed(target, location) < d)
+    			return true;
+    	}
+    	
+    	return false;
+    }
 }

@@ -31,7 +31,16 @@ public class Seed {
 	ploidy = Ploidy.NONE;
 	
   }
-  public seed getSeed(Seed s){
+  public Seed(Seed seed) {
+	// TODO Auto-generated constructor stub
+	 this.x = seed.x;
+	 this.y = seed.y;
+	 this.tetraploid = seed.tetraploid;
+	 this.ploidy = seed.ploidy;
+	 this.score = seed.score;
+  }
+
+public seed getSeed(Seed s){
 	seed rtnSeed = new seed();
 	rtnSeed.x = s.x;
 	rtnSeed.y = s.y;
@@ -47,5 +56,7 @@ public class Seed {
 		  return false;
 	  }
   }
-  
+  public String toString() {
+  	return "(" + Double.toString(x) + " " + Double.toString(y) + ")";
+  }
 }

@@ -5,7 +5,7 @@ import java.util.*;
 import watermelon.sim.Pair;
 import watermelon.sim.Point;
 import watermelon.sim.seed;
-import watermelon.group5.*;
+
 
 
 public class Coloring{
@@ -15,9 +15,7 @@ public class Coloring{
 
 	//double m_length, m_width;
 	
-	public void init() {
 
-	}
 
 	
 	//brute force coloring
