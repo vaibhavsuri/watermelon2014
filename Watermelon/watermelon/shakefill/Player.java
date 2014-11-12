@@ -2,7 +2,6 @@ package watermelon.shakefill;
 
 
 import java.util.*;
-
 import watermelon.sim.Pair;
 import watermelon.sim.Point;
 import watermelon.sim.seed;
@@ -34,7 +33,7 @@ public class Player extends watermelon.sim.Player{
 	    System.out.println(date1.toString());
 
 		bestList = Packing.hexagonal(treelist, length, width);
-		Post.shake_things_up(bestList, treelist, length, width, 10);
+		Post.shake_things_up(bestList, treelist, length, width);
 
 		Post.fill_seeds_with_push(bestList, treelist, length, width);
 		Post.fill_seeds(bestList, treelist, length, width);

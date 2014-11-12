@@ -18,10 +18,14 @@ public class Post{
 	}
 	
 	//Calls the shake method for different direction shakes and mutliple shakes
-	public static void shake_things_up(ArrayList<seed> seedlist, ArrayList<Pair> treelist, double length, double width, int limit)
+	public static void shake_things_up(ArrayList<seed> seedlist, ArrayList<Pair> treelist, double length, double width)
 	{
-		//Limit parameter determines the number of shakes in one direction
 		int curr_iter = 0; 
+		int limit;
+		if (length<=30 && width<=30)
+			limit=8;
+		else
+			limit=6;
 		while(curr_iter < limit)
 		{
 			System.out.println("Iteration = "+curr_iter);
