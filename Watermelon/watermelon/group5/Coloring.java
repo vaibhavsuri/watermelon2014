@@ -490,11 +490,18 @@ public class Coloring{
 	  
 	ArrayList<Seed> sList = PlayerUtil.convertSeedList(seedList);
 	ArrayList<Seed> startList = new ArrayList<>();
-	
+	/*
 	for (double l = length / 5 ; l <  length  ; l += length / 5 ){
 	  for ( double w = width / 5 ; w < width  ; w += width / 5){
 	    startList.add(PlayerUtil.getNeighborSeeds(new Seed(l,w), sList).get(0));
 	  }
+	}*/
+	startList.add(new Seed(seedList.get(0)));
+	for(int i = 0 ; i < seedList.size() / 10 ; i++ ){
+		int rand = (int)Math.random()*(seedList.size() -1);
+		if(!startList.contains(rand)){
+			startList.add(new Seed(seedList.get(rand)));
+		}
 	}
 	double bestScore = 0;
 	double tempScore = 0;

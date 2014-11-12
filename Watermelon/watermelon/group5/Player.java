@@ -63,7 +63,8 @@ public class Player extends watermelon.sim.Player{
 		for (java.util.Map.Entry<ArrayList<seed>, String> packList : packingList.entrySet()){
             System.out.println("Neighbor Inverted Top Left...");
             finalSolutionList.put(Coloring.neighbor_invert_topleft(packList.getKey(), s, length, width),"Packing: "+packList.getValue()+"\tColoring: neighbor_invert_topleft");
-			//finalSolutionList.put(Coloring.incrementalColoring(packList.getKey(), length, width, s),"Packing: "+packList.getValue()+"\tColoring: incrementalColoring");
+            System.out.println("Incremental Coloring...");
+            finalSolutionList.put(Coloring.incrementalColoring(packList.getKey(), length, width, s),"Packing: "+packList.getValue()+"\tColoring: incrementalColoring");
             System.out.println("Alternate...");
             finalSolutionList.put(Coloring.alternate(packList.getKey(), s, length, width),"Packing: "+packList.getValue()+"\tColoring: alternate");
             System.out.println("Alternate Edge Start..");
@@ -78,7 +79,7 @@ public class Player extends watermelon.sim.Player{
 			finalSolutionList.put(Coloring.insideout(packList.getKey(), s, length, width),"Packing: "+packList.getValue()+"\tColoring: insideout");
             System.out.println("Top Left Coloring...");
             finalSolutionList.put(Coloring.topleft(packList.getKey(), s, length, width),"Packing: "+packList.getValue()+"\tColoring: topleft");
-			
+				
 		}
 		
 		
