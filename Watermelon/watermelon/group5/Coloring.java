@@ -178,7 +178,7 @@ public class Coloring{
 		    {
 		    	seed center;
 		    	boolean change=false;
-		    	System.out.println("Colored: "+finallist.size());
+		    	//System.out.println("Colored: "+finallist.size());
 		    	for(int i = 0; i < finallist.size(); i++)
 		    	{
 		    		center = finallist.get(i);
@@ -337,7 +337,7 @@ public class Coloring{
 	    }
 	    templist.add(middle_seed);
 	    color_check[seedlist.indexOf(middle_seed)]=true;
-	    //System.out.println("Seed List size: "+seedlist.size());
+	    System.out.println("Seed List size: "+seedlist.size());
 	    
 	    double offset = 1;//offset determines the radius for coloring
 	    int seeds_changes=0;
@@ -387,7 +387,7 @@ public class Coloring{
 	    first_seed = seedlist.get(0);
 	    templist.add(first_seed);
 	    color_check[seedlist.indexOf(first_seed)]=true;
-	    //System.out.println("Seed List size: "+seedlist.size());
+	    System.out.println("Seed List size: "+seedlist.size());
 	    
 	    double offset = 1;//offset determines the radius for coloring
 	    int seeds_changes=0;

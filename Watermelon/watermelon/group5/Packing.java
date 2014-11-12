@@ -117,6 +117,67 @@ public class Packing{
 		fill_seeds(seedlist,treelist,length, width);
 		return seedlist;
 	}
+    
+    //hexagonal packing with spacing
+    public static ArrayList<seed> hexagonal_with_spacing(ArrayList<Pair> treelist, double length, double width)
+    {
+        //calculating extra space avaliable
+        double wallLength=length-distowall;
+        double k=1.0;
+        int rows=1;
+        while(k<=wallLength){
+            rows++;
+            k+=1.7321;
+        }
+        k-=1.7321;
+        rows=rows-2;
+        double remainingSpace=wallLength-k;
+        double extraSpacing=(remainingSpace-.01)/rows;
+        
+        System.out.println("Length Remaining: "+wallLength+" Remaining Space: "+remainingSpace+" Rows: "+rows+" Extra Spacing: "+extraSpacing);
+        
+        //same packing as before
+        ArrayList<seed> seedlist = new ArrayList<seed>();
+        double i = distowall;
+        double j;
+        double offset = 0;
+        while(i <= length - distowall)
+        {
+            j = distowall + offset;
+            while (j <= width - distowall)
+            {
+                boolean add = true;
+                boolean far = false;
+                seed tmp = new seed(j, i, false);
+                for (int f = 0; f < treelist.size(); f++) {
+                    if (distance(tmp, treelist.get(f)) < distotree) {
+                        add = false;
+                        break;
+                    }
+                }
+                if (add) {
+                    seedlist.add(tmp);
+                }
+                if(far){
+                    j = j + distoseed+.01;
+                    far=false;
+                }
+                else {
+                    j= j + distoseed;
+                    far=true;
+                }
+            }
+            
+            if (offset==0)
+                offset = distowall;
+            else
+                offset=0;
+            
+            //shift rows with extra space
+            i = i + 1.7321+extraSpacing;
+        }
+        return seedlist;
+    }
 	
 	//hexagonal packing inverted
 		public static ArrayList<seed> hexagonal_invert(ArrayList<Pair> treelist, double length, double width)

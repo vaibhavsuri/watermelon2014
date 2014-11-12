@@ -149,7 +149,6 @@ public class Player extends watermelon.sim.Player{
         double k=1.0;
         int rows=1;
         while(k<=wallLength){
-            System.out.println("K: "+k);
             rows++;
             k+=1.7321;
         }
@@ -166,7 +165,6 @@ public class Player extends watermelon.sim.Player{
         double offset = 0;
         while(i <= length - distowall)
         {
-            System.out.println("Row: "+i);
             j = distowall + offset;
             while (j <= width - distowall)
             {
